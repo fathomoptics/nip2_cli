@@ -1,5 +1,5 @@
 {
-  "name": "nip2-cli",
+  "name": "@lumii/nip2-cli",
   "version": "0.1.0",
   "description": "Run nip2 batch sheets from node",
   "main": "index.js",
@@ -9,15 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/tombaran/lumii-three-api.git"
+    "url": "git+ssh://git@github.com/lumiidisplay/nip2_cli.git"
   },
   "author": "Matt Hirsch <matt@lumiidisplay.com>",
-  "license": "UNLICENSED",
+  "license": "LGPL",
   "bugs": {
-    "url": "https://github.com/tombaran/lumii-three-api/issues"
+    "url": "https://github.com/lumiidisplay/nip2_cli/issues"
   },
   "homepage": "http://www.lumiidisplay.com",
-  "private": true,
   "files": [
     "index.js"
   ]
