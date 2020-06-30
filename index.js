@@ -14,17 +14,22 @@ module.exports.setOptions = function(o) {
   Object.assign(options, o);
 };
 
-module.exports.nip2 = async function(main, cellMap, outPath) {
+module.exports.nip2Promise = function(main, cellMap, outPath) {
   var commandArgs = Object.keys(cellMap).reduce( (acc, ele) => acc.concat(['-=',  expandName(ele) + '=' + cellMap[ele] ]), []);
   commandArgs.unshift('-bp');
   commandArgs = commandArgs.concat(['-=', 'main=' + expandName(main)]);
   if(typeof outPath === 'string' && outPath.length > 0)
     commandArgs = commandArgs.concat([ '-o', outPath ]);
   commandArgs.push(path.join(options.sheetPath, options.sheetName));
-  const {stdout, stderr} = await execFile('nip2', commandArgs);
-  return stdout;
+  return execFile('nip2', commandArgs);
 };
 
 function expandName(n) {
   return ['Workspaces', options.tabName, n].join('.');
 }
+
+module.exports.nip2 = async function(...args) {
+  const execPromise = module.exports.nip2Promise(...args);
+  const {stdout, stderr} = await execPromise;
+  return stdout;
+};
