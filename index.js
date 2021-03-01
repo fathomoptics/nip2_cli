@@ -7,21 +7,25 @@ const execFile = util.promisify(require('child_process').execFile);
 const options = {
   tabName: 'tab1',
   sheetName: 'workspace.ws',
-  sheetPath: process.cwd()
+  sheetPath: process.cwd(),
+  env: {}
 };
 
 module.exports.setOptions = function(o) {
-  Object.assign(options, o);
+  return Object.assign(options, o);
 };
 
 module.exports.nip2Promise = function(main, cellMap, outPath) {
-  var commandArgs = Object.keys(cellMap).reduce( (acc, ele) => acc.concat(['-=',  expandName(ele) + '=' + cellMap[ele] ]), []);
+  let commandArgs = Object.keys(cellMap).reduce( (acc, ele) => acc.concat(['-=',  expandName(ele) + '=' + cellMap[ele] ]), []);
   commandArgs.unshift('-bp');
   commandArgs = commandArgs.concat(['-=', 'main=' + expandName(main)]);
   if(typeof outPath === 'string' && outPath.length > 0)
     commandArgs = commandArgs.concat([ '-o', outPath ]);
   commandArgs.push(path.join(options.sheetPath, options.sheetName));
-  return execFile('nip2', commandArgs);
+
+  let env = JSON.parse(JSON.stringify(process.env));
+  Object.assign(env, options.env);
+  return execFile('nip2', commandArgs, {env});
 };
 
 function expandName(n) {
