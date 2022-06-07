@@ -4,32 +4,33 @@ const process = require('process');
 const path = require('path');
 const execFile = util.promisify(require('child_process').execFile);
 
-const options = {
+const defaultOptions = {
   tabName: 'tab1',
-  sheetName: 'workspace.ws',
-  sheetPath: process.cwd(),
+  sheetPath: path.join(process.cwd(), 'workspace.ws'),
   env: {}
 };
 
 module.exports.setOptions = function(o) {
-  return Object.assign(options, o);
+  return Object.assign(defaultOptions, o);
 };
 
-module.exports.nip2Promise = function(main, cellMap, outPath) {
-  let commandArgs = Object.keys(cellMap).reduce( (acc, ele) => acc.concat(['-=',  expandName(ele) + '=' + cellMap[ele] ]), []);
-  commandArgs.unshift('-bp');
-  commandArgs = commandArgs.concat(['-=', 'main=' + expandName(main)]);
+module.exports.nip2Promise = function(main, cellMap, options) {
+  options = Object.assign({}, defaultOptions, options);
+  let { outPath, signal, tabName, env, sheetPath } = { ...options };
+  env = Object.assign({}, JSON.parse(JSON.stringify(process.env)), env);
+
+  let commandArgs = Object.keys(cellMap).reduce( (acc, ele) => acc.concat(['-=',  `${expandName(tabName, ele)}=${cellMap[ele]}`]), []);
+  // commandArgs.unshift('-bp');
+  commandArgs = commandArgs.concat(['-=', `main=${expandName(tabName, main)}`]);
   if(typeof outPath === 'string' && outPath.length > 0)
     commandArgs = commandArgs.concat([ '-o', outPath ]);
-  commandArgs.push(path.join(options.sheetPath, options.sheetName));
+  commandArgs.push(path.normalize(options.sheetPath));
 
-  let env = JSON.parse(JSON.stringify(process.env));
-  Object.assign(env, options.env);
-  return execFile('nip2', commandArgs, {env});
+  return execFile('nip2', commandArgs, { env, signal });
 };
 
-function expandName(n) {
-  return ['Workspaces', options.tabName, n].join('.');
+function expandName(tabName, n) {
+  return ['Workspaces', tabName, n].join('.');
 }
 
 module.exports.nip2 = async function(...args) {
