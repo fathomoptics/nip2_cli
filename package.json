@@ -1,6 +1,6 @@
 {
-  "name": "@lumii/nip2-cli",
-  "version": "1.0.0",
+  "name": "@fathomoptics/nip2-cli",
+  "version": "1.0.1",
   "description": "Run nip2 batch sheets from node",
   "main": "index.js",
   "scripts": {

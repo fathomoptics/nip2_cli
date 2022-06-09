@@ -20,7 +20,7 @@ module.exports.nip2Promise = function(main, cellMap, options) {
   env = Object.assign({}, JSON.parse(JSON.stringify(process.env)), env);
 
   let commandArgs = Object.keys(cellMap).reduce( (acc, ele) => acc.concat(['-=',  `${expandName(tabName, ele)}=${cellMap[ele]}`]), []);
-  // commandArgs.unshift('-bp');
+  commandArgs.unshift('-bp');
   commandArgs = commandArgs.concat(['-=', `main=${expandName(tabName, main)}`]);
   if(typeof outPath === 'string' && outPath.length > 0)
     commandArgs = commandArgs.concat([ '-o', outPath ]);
